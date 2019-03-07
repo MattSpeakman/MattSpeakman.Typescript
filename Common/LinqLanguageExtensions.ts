@@ -1,4 +1,4 @@
-﻿interface Array<T> {
+interface Array<T> {
     /** Return the first item in an array or null if no item exits*/
     first(): T;
 
@@ -30,6 +30,10 @@
 
     /** Order an array using a property selector in descending order*/
     orderByDescending(selector: (item: T) => any): Array<T>;
+
+    sum(selector: (item: any) => any): number;
+
+    distinct(selector:(item: T)=> any): Array<T>
 }
 
 /** Return the first item in an array or null if no item exits*/
@@ -107,6 +111,19 @@ Array.prototype.take = function (numOfRows: number, offset: number = 0) {
     return collection;
 }
 
+Array.prototype.distinct = function(selector: (item: any) => any) {
+    const result = [];
+    const map = new Map();
+    for (const item of this) {
+      const selection = selector(item)
+      if(!map.has(selection)){
+          map.set(selection, true);
+          result.push(selection);
+      }
+    }
+    return result;
+}
+
 /** Order an array using a property selector */
 Array.prototype.orderBy = function (selector: (item: any) => any) {
     return this.sort((a, b) => {
@@ -123,4 +140,12 @@ Array.prototype.orderBy = function (selector: (item: any) => any) {
 /** Order an array using a property selector in descending order*/
 Array.prototype.orderByDescending = function (selector: (item: any) => any) {
     return this.orderBy(selector).reverse();
+}
+
+Array.prototype.sum = function (selector: (item: any) => any): number {
+    let count = 0;
+    for(const item of this){
+        count += selector(item)
+    }
+    return count;
 }
