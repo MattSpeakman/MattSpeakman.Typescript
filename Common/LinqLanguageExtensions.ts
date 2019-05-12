@@ -31,9 +31,14 @@ interface Array<T> {
     /** Order an array using a property selector in descending order*/
     orderByDescending(selector: (item: T) => any): Array<T>;
 
-    sum(selector: (item: any) => any): number;
+    /** Return the sum of the property defined in the predicate */
+    sum(selector: (item: T) => number): number;
 
-    distinct(selector:(item: T)=> any): Array<T>
+    /** Return a selection of properties from each item in the array that are distinct */
+    distinct<NewT>(selector:(item: T)=> NewT): Array<NewT>
+    
+    /** Project each item in the array to a new form */
+    select<NewT>(selector: (item: T) => any): Array<NewT>
 }
 
 /** Return the first item in an array or null if no item exits*/
@@ -111,7 +116,8 @@ Array.prototype.take = function (numOfRows: number, offset: number = 0) {
     return collection;
 }
 
-Array.prototype.distinct = function(selector: (item: any) => any) {
+/** Return only the distinct items from the array decided by the supplied predicate */
+Array.prototype.distinct = function<NewT>(selector: (item: NewT) => NewT) {
     const result = [];
     const map = new Map();
     for (const item of this) {
@@ -142,10 +148,19 @@ Array.prototype.orderByDescending = function (selector: (item: any) => any) {
     return this.orderBy(selector).reverse();
 }
 
-Array.prototype.sum = function (selector: (item: any) => any): number {
+Array.prototype.sum = function (selector: (item: any) => number): number {
     let count = 0;
-    for(const item of this){
-        count += selector(item)
+    for(const item of this) {
+        count += +selector(item)
     }
     return count;
+}
+
+/** Project each item in the array to a new form */
+Array.prototype.select = function<NewT>(selector: (item: any) => any): Array<NewT> {
+    var arr = []
+    for (const item of this) {
+        arr.push(selector(item))
+    }
+    return arr
 }
