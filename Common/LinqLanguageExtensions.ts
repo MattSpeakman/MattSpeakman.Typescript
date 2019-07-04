@@ -46,7 +46,7 @@ interface Array<T> {
     /** Project each item in the array to a new form */
     select<NewT>(selector: (item: T) => any): Array<NewT>
 
-    groupBy<TGroup, T>(selector: (item: any) => any): Grouping<TGroup, T>[]
+    groupBy<TGroup, T>(selector: (item: T) => TGroup): Grouping<TGroup, T>[]
 }
 
 
@@ -174,7 +174,7 @@ Array.prototype.select = function<NewT>(selector: (item: any) => any): Array<New
     return arr
 }
 
-Array.prototype.groupBy = function<TGroup, T>(selector: (item: any) => any): Grouping<TGroup, T>[] {
+Array.prototype.groupBy = function<TGroup, T>(selector: (item: T) => TGroup): Grouping<TGroup, T>[] {
     var array: Grouping<TGroup, T>[] = []
     const distinct = this.distinct(selector)
     for (const dis of distinct) {
